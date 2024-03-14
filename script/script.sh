@@ -3,7 +3,7 @@ set -e
 
 ## export values from config file
 set -o allexport
-source config
+source ./config
 set +o allexport
 
 

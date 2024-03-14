@@ -32,6 +32,31 @@ The organizationIdentifier must be generated using the following schema based on
     Other initial character sequences are reserved for future amendments of the present document. In case "VAT" legal person identity type reference is used in combination with the "EU" transnational country code, the identifier value should comply with Council Directive 2006/112/EC [i.12], article 215.
 
 
+### QcStatement
+
+Certificates require fields defined in [etsi](https://www.etsi.org/deliver/etsi_en/319400_319499/31941205/02.01.01_60/en_31941205v020101p.pdf) to claim compliance with the EU legislation. The standard is based on [RFC3739](https://datatracker.ietf.org/doc/html/rfc3739#section-3.2.6).
+
+Two statements are mandatory:
+- esi4-qcStatement-1 ( OID 0.4.0.1862.1.1 )
+
+
+    This statement is a statement by the issuer that this
+    certificate is issued as a Qualified Certificate according
+    Annex I and II of the Directive 1999/93/EC of the European Parliament
+    and of the Council of 13 December 1999 on a Community framework
+    for electronic signatures, as implemented in the law of the country
+    specified in the issuer field of this certificate.
+
+- esi4-qcStatement-5 ( OID 0.4.0.1862.1.5 )
+
+
+    This statement holds URLs to PKI Disclosure Statements (PDS) in accordance 
+    with Annex A of ETSI EN 319 411-1.
+
+Additionally esi4-qcStatement-6 ( OID 0.4.0.1862.1.6 ) is used to define the role/usage of the certificate (signatures, seals, web auth).
+
+The values can be configured in the [config file](script/openssl-client.cnf)
+
 
 ## Alternatives considered
 

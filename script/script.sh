@@ -28,7 +28,7 @@ mkdir -p ./intermediate/csr
 mkdir -p intermediate/certs
 
 openssl genrsa -out ./intermediate/private/intermediate.cakey.pem 4096
-openssl req -new -sha256 -set_serial 02 -config ./intermediate/openssl.cnf \
+openssl req -new -sha256 -set_serial 02 -config ./openssl-intermediate.cnf \
   -subj "/C=DE/ST=Berlin/L=Berlin/O=FIWARE CA/CN=FIWARE-CA/emailAddress=ca@fiware.org/serialNumber=02" \
   -key ./intermediate/private/intermediate.cakey.pem \
   -out ./intermediate/csr/intermediate.csr.pem
@@ -53,10 +53,10 @@ mkdir -p client/certs
 openssl genrsa -out ./client/private/client.key.pem 4096
 openssl req -new -set_serial 03 -key ./client/private/client.key.pem -out ./client/csr/client.csr \
   -subj "/C=$COUNTRY/ST=$STATE/L=$LOCALITY/O=$ORGANISATION/CN=$COMMON_NAME/emailAddress=$EMAIL/serialNumber=03/organizationIdentifier=$ORGANISATION_IDENTIFIER" \
-  -config client/client_cert_ext.cnf
+  -config ./openssl-client.cnf
 openssl x509 -req -in ./client/csr/client.csr -CA ./intermediate/certs/ca-chain-bundle.cert.pem \
   -CAkey ./intermediate/private/intermediate.cakey.pem -out ./client/certs/client.cert.pem \
-  -CAcreateserial -days 1825 -sha256 -extfile ./client/client_cert_ext.cnf \
+  -CAcreateserial -days 1825 -sha256 -extfile ./openssl-client.cnf \
   -copy_extensions=copyall
 
 openssl x509 -in client/certs/client.cert.pem -out client/certs/client.cert.pem -outform PEM

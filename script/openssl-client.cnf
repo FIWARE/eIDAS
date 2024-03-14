@@ -17,7 +17,7 @@ copy_extensions = copyall
 [qcStatement]
 etsiQcsCompliance=SEQUENCE:etsiQcsCompliance
 qcs-QcPDS=SEQUENCE:qcs-QcPDS
-id-qc-statement=SEQUENCE:id-qc-statement
+id-qc-statement=SEQUENCE:id-qc-statement   ## https://www.etsi.org/deliver/etsi_ts/119400_119499/119495/01.05.01_60/ts_119495v010501p.pdf
 qcs-QcType=SEQUENCE:qcs-QcType
 [etsiQcsCompliance]
 statementId=OID:0.4.0.1862.1.1
@@ -30,30 +30,13 @@ QcPDS1=SEQUENCE:QcPDS1
 url=IA5STRING:https://example.org/pkidisclosure
 description=PRINTABLESTRING:example
 
+
 [id-qc-statement]
 statementId=OID:0.4.0.19495.2
 statementInfo=SEQUENCE:id-qc-statement-Info
 [id-qc-statement-Info]
-rolesOfPSP=SEQUENCE:rolesOfPSP
-nCAName=UTF8String:Dummy Financial Supervision Authority
+nCAName=UTF8String:Some test CA
 nCAId=UTF8String:XX-DFSA
-[rolesOfPSP]
-PSP_AI=SEQUENCE:PSP_AI
-PSP_AS=SEQUENCE:PSP_AS
-PSP_PI=SEQUENCE:PSP_PI
-PSP_IC=SEQUENCE:PSP_IC
-[PSP_AI]
-roleOfPspOid=OID:0.4.0.19495.1.3
-roleOfPspName=UTF8String:PSP_AI
-[PSP_AS]
-roleOfPspOid=OID:0.4.0.19495.1.1
-roleOfPspName=UTF8String:PSP_AS
-[PSP_PI]
-roleOfPspOid=OID:0.4.0.19495.1.2
-roleOfPspName=UTF8String:PSP_PI
-[PSP_IC]
-roleOfPspOid=OID:0.4.0.19495.1.4
-roleOfPspName=UTF8String:PSP_IC
 [qcs-QcType]
 statementId=OID:0.4.0.1862.1.6
 statementInfo=SEQUENCE:qcs-QcType-Info

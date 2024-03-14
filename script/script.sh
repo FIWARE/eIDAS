@@ -8,6 +8,7 @@ set +o allexport
 
 
 echo -n "" > index.txt
+echo -n "01" > serial
 
 mkdir -p private
 mkdir -p certs
@@ -49,7 +50,8 @@ openssl req -new -set_serial 03 -key ./client/client.key.pem -out ./client/clien
   -config client/client_cert_ext.cnf
 openssl x509 -req -in ./client/client.csr -CA ./intermediate/certs/ca-chain-bundle.cert.pem \
   -CAkey ./intermediate/private/intermediate.cakey.pem -out ./client/client.cert.pem \
-  -CAcreateserial -days 1825 -sha256 -extfile ./client/client_cert_ext.cnf
+  -CAcreateserial -days 1825 -sha256 -extfile ./client/client_cert_ext.cnf \
+  -copy_extensions=copyall
 
 openssl x509 -in client/client.cert.pem -out client/client.cert.pem -outform PEM
 

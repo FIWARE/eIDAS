@@ -10,15 +10,17 @@ Build the docker image with
    docker build . -t eidas:latest
 ```
 
-Run it
+Run it and mount local output folder
 ```
-   docker run --name eidas eidas:latest
+   docker run --mount type=bind,source="$(pwd)"/output,target=/out --name eidas eidas:latest 
 ```
 
-Copy the generated chain
+The subject of the client certificate can be configured by mounting a [config file](script%2Fconfig) as followed
+
 ```
-    docker cp eidas:/openssl-certs ./target-folder
+    docker run --mount type=bind,source="$(pwd)"/config,target=/config/config --name eidas eidas:latest 
 ```
+
 
 ## Requirements
 ### Subject

@@ -4,21 +4,15 @@ Script to create a certificate chain with self-signed CA where the client certif
 
 ## How to use
 
-Build the docker image with
-
+Run the container and mount local output folder
 ```
-   docker build . -t eidas:latest
-```
-
-Run it and mount local output folder
-```
-   docker run --mount type=bind,source="$(pwd)"/output,target=/out --name eidas eidas:latest 
+   docker run --mount type=bind,source="$(pwd)"/output,target=/out quay.io/pulledtim/eidas:latest 
 ```
 
 The subject of the client certificate can be configured by mounting a [config file](script%2Fconfig) as followed
 
 ```
-    docker run --mount type=bind,source="$(pwd)"/config,target=/config/config --name eidas eidas:latest 
+    docker run --mount type=bind,source="$(pwd)"/config,target=/config/config quay.io/pulledtim/eidas:latest 
 ```
 
 

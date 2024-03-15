@@ -2,6 +2,23 @@
 
 Script to create a certificate chain with self-signed CA where the client certificate is compliant with the [standard](https://www.etsi.org/deliver/etsi_en/319400_319499/31941203/01.02.01_60/en_31941203v010201p.pdf).
 
+## How to use
+
+Build the docker image with
+
+```
+   docker build . -t eidas:latest
+```
+
+Run it
+```
+   docker run --name eidas eidas:latest
+```
+
+Copy the generated chain
+```
+    docker cp eidas:/openssl-certs ./target-folder
+```
 
 ## Requirements
 ### Subject

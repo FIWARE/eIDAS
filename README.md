@@ -4,7 +4,7 @@ Script to create a certificate chain with self-signed CA where the client certif
 
 ## How to use
 
-Run the container and mount local output folder
+Run the container and mount an existing local output folder
 ```
    docker run --mount type=bind,source="$(pwd)"/output,target=/out quay.io/pulledtim/eidas:latest 
 ```

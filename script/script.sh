@@ -3,6 +3,13 @@ set -e
 
 OUTPUT_FOLDER="${OUTPUT_FOLDER:-./}"
 CONFIG_FILE="${CONFIG_FILE:-./config}"
+OUTPUT_FILENAME_P12="${OUTPUT_FILENAME_P12:-keystore.p12}"
+OUTPUT_FILENAME_JKS="${OUTPUT_FILENAME_JKS:-keystore.jks}"
+CONCAT_FILENAME="all_certs.pem"
+KEYSTORE_ALIAS="${KEYSTORE_ALIAS:-test-keystore}"
+KEYSTORE_PASSWORD="${KEYSTORE_PASSWORD:-password}"
+KEY_PASSWORD="${KEY_PASSWORD:-password}"
+
 export OUTPUT_FOLDER=$OUTPUT_FOLDER
 
 ## export values from config file
@@ -69,3 +76,20 @@ openssl x509 -in ${OUTPUT_FOLDER}client/certs/client.cert.pem -out ${OUTPUT_FOLD
 openssl rsa -noout -text -in ${OUTPUT_FOLDER}client/private/client.key.pem
 openssl req -noout -text -in ${OUTPUT_FOLDER}client/csr/client.csr
 openssl x509 -noout -text -in ${OUTPUT_FOLDER}client/certs/client.cert.pem
+
+echo "Creating keystore in $OUTPUT_FOLDER"
+echo "Concatenate certificate chain..."
+cat ${OUTPUT_FOLDER}client/certs/client.cert.pem ${OUTPUT_FOLDER}intermediate/certs/ca-chain-bundle.cert.pem > $OUTPUT_FOLDER/$CONCAT_FILENAME
+
+echo "Create pkcs12 keystore"
+openssl pkcs12 -export -inkey ${OUTPUT_FOLDER}client/private/client.key.pem -in $OUTPUT_FOLDER/$CONCAT_FILENAME -name $KEYSTORE_ALIAS -out $OUTPUT_FOLDER/${OUTPUT_FILENAME_P12} -password "pass:${KEYSTORE_PASSWORD}"
+
+echo "Remove concatenated certificate chain file"
+rm $OUTPUT_FOLDER/$CONCAT_FILENAME
+
+echo "Create Java Keystore"
+keytool -importkeystore -storepass $KEYSTORE_PASSWORD -srckeystore $OUTPUT_FOLDER/$OUTPUT_FILENAME_P12 -srcstoretype pkcs12 -destkeystore $OUTPUT_FOLDER/${OUTPUT_FILENAME_JKS} -srcstorepass $KEYSTORE_PASSWORD -deststorepass $KEYSTORE_PASSWORD -destkeypass $KEY_PASSWORD -srcalias $KEYSTORE_ALIAS -destalias $KEYSTORE_ALIAS -noprompt
+
+echo "------"
+echo "Created Java Keystore:"
+keytool -list -v -keystore $OUTPUT_FOLDER/$OUTPUT_FILENAME_JKS -storepass $KEYSTORE_PASSWORD

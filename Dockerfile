@@ -2,7 +2,7 @@ FROM alpine:latest
 
 # Install OpenSSL
 RUN apk update && \
-  apk add --no-cache openssl && \
+  apk add --no-cache openssl openjdk21-jre && \
   rm -rf "/var/cache/apk/*"
 
 COPY script/script.sh /openssl-certs/

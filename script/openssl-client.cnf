@@ -5,6 +5,7 @@ subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid,issuer
 keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
 extendedKeyUsage = clientAuth, emailProtection
+authorityInfoAccess = OCSP;URI:${OSCP_AIA}
 
 
 [req]

@@ -44,6 +44,9 @@ The organizationIdentifier must be generated using the following schema based on
 
     Other initial character sequences are reserved for future amendments of the present document. In case "VAT" legal person identity type reference is used in combination with the "EU" transnational country code, the identifier value should comply with Council Directive 2006/112/EC [i.12], article 215.
 
+### Authority Information Access
+
+As defined in chapter 4.4.1 of [etsi](https://www.etsi.org/deliver/etsi_en/319400_319499/31941202/02.02.01_60/en_31941202v020201p.pdf) the certificate shall contain a reference to an OCSP Response provider. This url can be configured via the `OSCP_AIA` config parameter.
 
 ### QcStatement
 

@@ -44,6 +44,11 @@ The organizationIdentifier must be generated using the following schema based on
 
     Other initial character sequences are reserved for future amendments of the present document. In case "VAT" legal person identity type reference is used in combination with the "EU" transnational country code, the identifier value should comply with Council Directive 2006/112/EC [i.12], article 215.
 
+### CRL Distribution Points
+
+As defined in chapter 4.3.11 of [etsi](https://www.etsi.org/deliver/etsi_en/319400_319499/31941202/02.02.01_60/en_31941202v020201p.pdf)
+if CRL is supported by the issuing CA, the CRL distribution point extension shall be present in certificates. This url
+can be configured via the `CRL_URI` config parameter.
 
 ### QcStatement
 

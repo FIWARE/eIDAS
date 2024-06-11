@@ -17,9 +17,12 @@ set -o allexport
 source $CONFIG_FILE
 set +o allexport
 
+envsubst < ./openssl-client.cnf > ./openssl-client-filled.cnf
+
 mkdir -p ${OUTPUT_FOLDER}
 echo -n "" > ${OUTPUT_FOLDER}index.txt
 echo -n "01" > ${OUTPUT_FOLDER}serial
+echo -n "1000" > ${OUTPUT_FOLDER}crlnumber
 
 mkdir -p ${OUTPUT_FOLDER}ca/private
 mkdir -p ${OUTPUT_FOLDER}ca/csr
@@ -64,10 +67,10 @@ mkdir -p ${OUTPUT_FOLDER}client/certs
 openssl genrsa -out ${OUTPUT_FOLDER}client/private/client.key.pem 4096
 openssl req -new -set_serial 03 -key ${OUTPUT_FOLDER}client/private/client.key.pem -out ${OUTPUT_FOLDER}client/csr/client.csr \
   -subj "/C=$COUNTRY/ST=$STATE/L=$LOCALITY/O=$ORGANISATION/CN=$COMMON_NAME/emailAddress=$EMAIL/serialNumber=03/organizationIdentifier=$ORGANISATION_IDENTIFIER" \
-  -config ./openssl-client.cnf
+  -config ./openssl-client-filled.cnf
 openssl x509 -req -in ${OUTPUT_FOLDER}client/csr/client.csr -CA ${OUTPUT_FOLDER}intermediate/certs/ca-chain-bundle.cert.pem \
   -CAkey ${OUTPUT_FOLDER}intermediate/private/intermediate.cakey.pem -out ${OUTPUT_FOLDER}client/certs/client.cert.pem \
-  -CAcreateserial -days 1825 -sha256 -extfile ./openssl-client.cnf \
+  -CAcreateserial -days 1825 -sha256 -extfile ./openssl-client-filled.cnf \
   -copy_extensions=copyall
 
 openssl x509 -in ${OUTPUT_FOLDER}client/certs/client.cert.pem -out ${OUTPUT_FOLDER}client/certs/client.cert.pem -outform PEM
@@ -76,6 +79,32 @@ openssl x509 -in ${OUTPUT_FOLDER}client/certs/client.cert.pem -out ${OUTPUT_FOLD
 openssl rsa -noout -text -in ${OUTPUT_FOLDER}client/private/client.key.pem
 openssl req -noout -text -in ${OUTPUT_FOLDER}client/csr/client.csr
 openssl x509 -noout -text -in ${OUTPUT_FOLDER}client/certs/client.cert.pem
+
+# Create CRL
+openssl ca -config ./openssl-intermediate.cnf -gencrl -out ${OUTPUT_FOLDER}crl.pem
+
+# Client to revoke
+openssl genrsa -out ${OUTPUT_FOLDER}client/private/client-revoked.key.pem 4096
+openssl req -new -set_serial 04 -key ${OUTPUT_FOLDER}client/private/client-revoked.key.pem -out ${OUTPUT_FOLDER}client/csr/client-revoked.csr \
+  -subj "/C=$COUNTRY/ST=$STATE/L=$LOCALITY/O=$ORGANISATION/CN=$COMMON_NAME-revoked/emailAddress=$EMAIL/serialNumber=04/organizationIdentifier=$ORGANISATION_IDENTIFIER" \
+  -config ./openssl-client-filled.cnf
+openssl x509 -req -in ${OUTPUT_FOLDER}client/csr/client-revoked.csr -CA ${OUTPUT_FOLDER}intermediate/certs/ca-chain-bundle.cert.pem \
+  -CAkey ${OUTPUT_FOLDER}intermediate/private/intermediate.cakey.pem -out ${OUTPUT_FOLDER}client/certs/client-revoked.cert.pem \
+  -CAcreateserial -days 1825 -sha256 -extfile ./openssl-client-filled.cnf \
+  -copy_extensions=copyall
+
+openssl x509 -in ${OUTPUT_FOLDER}client/certs/client-revoked.cert.pem -out ${OUTPUT_FOLDER}client/certs/client-revoked.cert.pem -outform PEM
+
+## Verify
+openssl rsa -noout -text -in ${OUTPUT_FOLDER}client/private/client-revoked.key.pem
+openssl req -noout -text -in ${OUTPUT_FOLDER}client/csr/client-revoked.csr
+openssl x509 -noout -text -in ${OUTPUT_FOLDER}client/certs/client-revoked.cert.pem
+
+# Revoke the client
+openssl ca -config ./openssl-intermediate.cnf -revoke ${OUTPUT_FOLDER}client/certs/client-revoked.cert.pem
+
+# Recreate CRL
+openssl ca -config ./openssl-intermediate.cnf -gencrl -out ${OUTPUT_FOLDER}crl.pem
 
 echo "Creating keystore in $OUTPUT_FOLDER"
 echo "Concatenate certificate chain..."

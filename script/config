@@ -5,3 +5,4 @@ ORGANISATION_IDENTIFIER="VATDE-1234567"
 ORGANISATION="FIWARE Foundation"
 COMMON_NAME="FIWARE-Test"
 EMAIL="test@fiware.org"
+CRL_URI=http://localhost:12345/intermediate.crl.pem

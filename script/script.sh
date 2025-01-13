@@ -119,6 +119,15 @@ rm $OUTPUT_FOLDER/$CONCAT_FILENAME
 echo "Create Java Keystore"
 keytool -importkeystore -storepass $KEYSTORE_PASSWORD -srckeystore $OUTPUT_FOLDER/$OUTPUT_FILENAME_P12 -srcstoretype pkcs12 -destkeystore $OUTPUT_FOLDER/${OUTPUT_FILENAME_JKS} -srcstorepass $KEYSTORE_PASSWORD -deststorepass $KEYSTORE_PASSWORD -destkeypass $KEY_PASSWORD -srcalias $KEYSTORE_ALIAS -destalias $KEYSTORE_ALIAS -noprompt
 
+echo "Create Java Keystore for the CA"
+keytool -importcert -keystore $OUTPUT_FOLDER/ca-cert.p12 -storepass password -file ${OUTPUT_FOLDER}ca/certs/cacert.pem -alias $KEYSTORE_ALIAS -noprompt
+echo "Create for the intermediate"
+keytool -importcert -keystore $OUTPUT_FOLDER/intermediate-cert.p12 -storepass password -file $OUTPUT_FOLDER/intermediate/certs/intermediate.cacert.pem -alias intermediate -noprompt
+
+keytool -importkeystore -srckeystore ${OUTPUT_FOLDER}/ca-cert.p12 -srcstorepass $KEYSTORE_PASSWORD -deststorepass $KEYSTORE_PASSWORD -srcstoretype pkcs12 -destkeystore ${OUTPUT_FOLDER}/ca-store.jks -deststoretype jks -noprompt
+echo "Import intermediate"
+keytool -importkeystore -srckeystore ${OUTPUT_FOLDER}/intermediate-cert.p12 -srcstorepass $KEYSTORE_PASSWORD -deststorepass $KEYSTORE_PASSWORD -srcstoretype pkcs12 -destkeystore ${OUTPUT_FOLDER}/ca-store.jks -deststoretype jks -noprompt
+
 echo "------"
 echo "Created Java Keystore:"
 keytool -list -v -keystore $OUTPUT_FOLDER/$OUTPUT_FILENAME_JKS -storepass $KEYSTORE_PASSWORD
